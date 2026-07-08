@@ -6,10 +6,10 @@ export default function ContactCta() {
   return (
     <section id="contact" className="py-20">
       <Container>
-        <Reveal className="rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(163,230,53,0.15),rgba(255,255,255,0.04))] p-8 sm:p-12">
+        <Reveal className="rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(249,115,22,0.15),rgba(255,255,255,0.04))] p-8 sm:p-12">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
-              <p className="text-sm uppercase tracking-[0.35em] text-lime-300">Contact</p>
+              <p className="text-sm uppercase tracking-[0.35em] text-orange-300">Contact</p>
               <h2 className="mt-4 text-3xl font-semibold text-white sm:text-4xl">
                 Ready to train in a space that matches your ambition?
               </h2>
