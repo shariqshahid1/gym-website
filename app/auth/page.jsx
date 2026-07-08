@@ -7,7 +7,7 @@ export const metadata = {
 
 export default function AuthPage() {
   return (
-    <section className="py-20">
+    <section className="py-20 sm:py-28">
       <Container>
         <AuthForm />
       </Container>

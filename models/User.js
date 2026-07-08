@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 
 const membershipSchema = new Schema(
   {
-    plan: { type: String, enum: ["Starter", "Pro", "Elite"], default: "Starter" },
+    plan: { type: String, enum: ["Basic", "Standard", "Premium"], default: "Basic" },
     billingCycle: { type: String, enum: ["monthly", "yearly"], default: "monthly" },
     status: { type: String, default: "inactive" },
     subscribedAt: Date

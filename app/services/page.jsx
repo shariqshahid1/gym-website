@@ -1,20 +1,22 @@
+import { Sparkles } from "lucide-react";
 import ServicesGrid from "@/components/sections/services-grid";
 import Container from "@/components/ui/container";
-import SectionHeader from "@/components/ui/section-header";
+import SectionTitle from "@/components/ui/section-title";
 
 export const metadata = {
-  title: "Services"
+  title: "Services",
+  description: "Explore personal training, cardio, strength training, yoga, and CrossFit programs."
 };
 
 export default function ServicesPage() {
   return (
     <>
-      <section className="py-20">
+      <section className="pt-20 pb-0">
         <Container>
-          <SectionHeader
+          <SectionTitle
             eyebrow="Programs"
-            title="Coaching, programming, and recovery under one premium roof."
-            description="Our services combine serious expertise with a luxury feel, making it easier to commit, improve, and stay consistent."
+            title="Every service is designed to help you move with purpose."
+            description="Choose the training style that fits your goals and let our team guide the process with structure, motivation, and premium support."
           />
         </Container>
       </section>

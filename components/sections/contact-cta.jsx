@@ -26,7 +26,7 @@ export default function ContactCta() {
               </Link>
               <Link
                 href="/auth"
-                className="rounded-full border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition hover:border-lime-300/35"
+                className="rounded-full bg-[linear-gradient(135deg,#f97316_0%,#ef4444_55%,#fb923c_100%)] px-6 py-3 text-sm font-semibold text-white shadow-[0_16px_42px_rgba(249,115,22,0.26)] transition hover:-translate-y-0.5 hover:shadow-[0_24px_52px_rgba(239,68,68,0.34)]"
               >
                 Create Account
               </Link>

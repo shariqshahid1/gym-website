@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Facebook, Instagram, Linkedin, Youtube } from "lucide-react";
+import Button from "@/components/ui/button";
 import Card from "@/components/ui/card";
 import Container from "@/components/ui/container";
 import Reveal from "@/components/ui/reveal";
@@ -13,24 +14,25 @@ const socialIcons = {
   youtube: Youtube
 };
 
-export const metadata = {
-  title: "Trainers",
-  description: "Meet the PulseForge trainers and explore their fitness specializations."
-};
-
-export default function TrainersPage() {
+export default function TrainersPreview({ limit = 3 }) {
   return (
-    <section className="py-20">
-      <Container className="space-y-12">
-        <SectionTitle
-          eyebrow="Trainers"
-          title="A coaching team built for real progress."
-          description="Our trainers bring experience across strength, conditioning, yoga, mobility, and one-on-one transformation coaching."
-        />
+    <section className="section-fade py-20">
+      <Container className="space-y-10">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <SectionTitle
+            eyebrow="Trainers"
+            title="Meet the experts behind every transformation."
+            description="Our trainers combine experience, motivation, and modern programming to help members progress with confidence."
+          />
+          <Button href="/trainers" variant="secondary">
+            View All Trainers
+          </Button>
+        </div>
+
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {trainers.map((trainer, index) => (
+          {trainers.slice(0, limit).map((trainer, index) => (
             <Reveal key={trainer.name} delay={index * 0.08}>
-              <Card className="group overflow-hidden hover:border-orange-400/20 transition-all duration-500">
+              <Card className="group overflow-hidden">
                 <div className="relative overflow-hidden">
                   <Image
                     src={trainer.image}
@@ -43,27 +45,26 @@ export default function TrainersPage() {
                   <div className="absolute left-5 top-5 rounded-full border border-white/10 bg-black/45 px-3 py-1 text-[11px] uppercase tracking-[0.3em] text-orange-300">
                     Coach
                   </div>
-                  <div className="absolute bottom-5 right-5">
-                    <div className="flex gap-2">
-                      {trainer.socials.slice(0, 3).map((social) => {
-                        const Icon = socialIcons[social];
-                        return (
-                          <span
-                            key={social}
-                            className="inline-flex rounded-full border border-white/10 bg-black/45 p-2.5 text-white/60 transition hover:-translate-y-0.5 hover:border-orange-400/30 hover:text-orange-300"
-                          >
-                            <Icon size={14} />
-                          </span>
-                        );
-                      })}
-                    </div>
-                  </div>
                 </div>
                 <div className="space-y-4 p-6">
                   <div>
                     <h3 className="text-2xl font-semibold text-white">{trainer.name}</h3>
-                    <p className="mt-1 text-sm text-orange-300">{trainer.role}</p>
+                    <p className="mt-2 text-sm text-orange-300">{trainer.role}</p>
                     <p className="mt-3 text-sm leading-7 text-white/60">{trainer.bio}</p>
+                  </div>
+                  <div className="flex gap-3">
+                    {trainer.socials.map((social) => {
+                      const Icon = socialIcons[social];
+
+                      return (
+                        <span
+                          key={social}
+                          className="inline-flex rounded-full border border-white/10 bg-black/30 p-3 text-white/60 transition hover:-translate-y-0.5 hover:border-orange-400/30 hover:text-orange-300"
+                        >
+                          <Icon size={16} />
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
               </Card>

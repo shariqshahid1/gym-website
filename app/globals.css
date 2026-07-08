@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+@theme {
+  --color-gym-dark: #060606;
+  --color-gym-darker: #050505;
+  --color-gym-card: #0c0c0c;
+  --color-gym-orange: #f97316;
+  --color-gym-red: #ef4444;
+  --color-gym-lime: #a3e635;
+}
+
 :root {
   color-scheme: dark;
 }
@@ -8,8 +17,27 @@ html {
   scroll-behavior: smooth;
 }
 
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #060606;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(249, 115, 22, 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(249, 115, 22, 0.5);
+}
+
 body {
-  font-family: var(--font-manrope), sans-serif;
+  font-family: var(--font-inter), sans-serif;
+  background: #060606;
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(249, 115, 22, 0.08), transparent 18%),
+    radial-gradient(circle at 85% 15%, rgba(239, 68, 68, 0.08), transparent 16%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 22%);
 }
 
 h1,
@@ -18,15 +46,89 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-syne), var(--font-manrope), sans-serif;
+  font-family: var(--font-poppins), var(--font-inter), sans-serif;
 }
 
 ::selection {
-  background: rgba(163, 230, 53, 0.85);
+  background: rgba(249, 115, 22, 0.85);
   color: #050505;
 }
 
 .glass-panel {
   background: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(16px);
+}
+
+.mesh-overlay {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+
+.section-fade {
+  position: relative;
+}
+
+.section-fade::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 24%, transparent 76%, rgba(255, 255, 255, 0.02));
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #fff;
+  -webkit-box-shadow: 0 0 0px 1000px #0c0c0c inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(100%); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+  cursor: pointer;
+}
+
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
 }
