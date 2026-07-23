@@ -19,16 +19,16 @@ const poppins = Poppins({
 export const metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: `${siteConfig.name} Gym`,
+    default: `${siteConfig.name} | Elite Fitness & Training`,
     template: `%s | ${siteConfig.name}`
   },
   description: siteConfig.description,
   keywords: ["gym website", "fitness", "personal training", "next.js gym"],
   openGraph: {
-    title: `${siteConfig.name} Gym`,
+    title: `${siteConfig.name} | Elite Fitness & Training`,
     description: siteConfig.description,
     url: siteConfig.url,
-    siteName: `${siteConfig.name} Gym`,
+    siteName: `${siteConfig.name}`,
     type: "website"
   }
 };
