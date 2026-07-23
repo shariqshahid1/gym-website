@@ -14,6 +14,7 @@ export default function Navbar() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState(null);
+  const [scrolled, setScrolled] = useState(false);
   const { addToast } = useToast();
 
   useEffect(() => {
@@ -22,6 +23,14 @@ export default function Navbar() {
       .then((data) => setUser(data?.user || null))
       .catch(() => setUser(null));
   }, [pathname]);
+
+  useEffect(() => {
+    function onScroll() {
+      setScrolled(window.scrollY > 20);
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   async function handleLogout() {
     try {
@@ -36,137 +45,140 @@ export default function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-50">
-      <Container className="pt-4">
-        <div className="flex h-20 items-center justify-between rounded-full border border-white/10 bg-black/65 px-6 shadow-[0_18px_60px_rgba(0,0,0,0.28)] backdrop-blur-xl">
-          <Link href="/" className="flex items-center gap-3 text-lg font-semibold tracking-[0.2em] text-white group">
-            <span className="h-2.5 w-2.5 rounded-full bg-orange-500 shadow-[0_0_20px_rgba(249,115,22,0.9)] transition-all duration-300 group-hover:shadow-[0_0_30px_rgba(249,115,22,1)] group-hover:scale-110" />
-            PULSEFORGE
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "py-3" : "py-5"}`}>
+      <Container>
+        <div className={`flex h-16 items-center justify-between rounded-xl border border-white/[0.08] px-5 transition-all duration-300 ${
+          scrolled ? "bg-[#0a0a0a]/90 backdrop-blur-md shadow-lg" : "bg-[#0a0a0a]/60 backdrop-blur-sm"
+        }`}>
+          <Link href="/" className="flex items-center gap-2.5 text-lg font-bold tracking-wider text-white">
+            <span className="h-2 w-2 rounded-full bg-red-600" />
+            PULSE<span className="text-red-500">FORGE</span>
           </Link>
 
-          <nav className="hidden items-center gap-8 md:flex">
+          <nav className="hidden items-center gap-1 md:flex">
             {navLinks.map((link) => {
               const active = pathname === link.href;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`text-sm transition relative ${
-                    active ? "text-orange-300" : "text-white/70 hover:text-white"
+                  className={`px-3 py-2 text-sm rounded-lg transition ${
+                    active
+                      ? "text-white bg-white/[0.06]"
+                      : "text-white/50 hover:text-white hover:bg-white/[0.03]"
                   }`}
                 >
                   {link.label}
-                  {active && (
-                    <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 h-0.5 w-4 rounded-full bg-orange-400" />
-                  )}
                 </Link>
               );
             })}
+          </nav>
+
+          <div className="hidden items-center gap-3 md:flex">
             {user ? (
-              <div className="flex items-center gap-3">
+              <>
                 <Link
                   href="/dashboard"
-                  className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm transition ${
+                  className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition ${
                     pathname === "/dashboard"
-                      ? "bg-orange-500/20 text-orange-300"
-                      : "text-white/70 hover:text-white hover:bg-white/5"
+                      ? "bg-red-600/10 text-red-400"
+                      : "text-white/60 hover:text-white"
                   }`}
                 >
-                  <User size={14} />
+                  <User size={15} />
                   {user.name?.split(" ")[0]}
                 </Link>
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="rounded-full border border-white/10 bg-white/[0.04] p-2.5 text-white/60 transition hover:border-red-400/30 hover:text-red-400 hover:bg-red-500/10"
+                  className="rounded-lg border border-white/[0.08] p-2 text-white/40 transition hover:text-red-400 hover:border-red-500/20"
                   aria-label="Logout"
                 >
-                  <LogOut size={14} />
+                  <LogOut size={15} />
                 </button>
-              </div>
+              </>
             ) : (
-              <div className="flex items-center gap-3">
-                <Link
-                  href="/auth"
-                  className="text-sm text-white/70 hover:text-white transition"
-                >
-                  Login
+              <>
+                <Link href="/auth" className="text-sm text-white/50 hover:text-white transition px-3 py-2">
+                  Sign In
                 </Link>
-                <Button href="/pricing" className="px-5 py-2.5 text-xs">
+                <Button href="/auth" className="px-4 py-2 text-xs">
                   Join Now
                 </Button>
-              </div>
+              </>
             )}
-          </nav>
+          </div>
 
           <button
             type="button"
-            className="inline-flex text-white md:hidden"
-            onClick={() => setOpen((value) => !value)}
+            className="inline-flex text-white md:hidden p-2"
+            onClick={() => setOpen((v) => !v)}
             aria-label="Toggle menu"
           >
-            {open ? <X size={24} /> : <Menu size={24} />}
+            {open ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
       </Container>
 
-      {open && (
-        <Container className="md:hidden">
-          <div
-            className="mt-3 flex flex-col gap-4 rounded-[1.75rem] border border-white/10 bg-black/95 p-5 shadow-[0_24px_60px_rgba(0,0,0,0.32)]"
-            style={{ animation: "slideDown 0.2s ease-out" }}
-          >
+      {/* Mobile menu */}
+      <div className={`md:hidden overflow-hidden transition-all duration-300 ${open ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}>
+        <Container>
+          <div className="mt-2 rounded-xl border border-white/[0.08] bg-[#0a0a0a]/95 backdrop-blur-md p-4 space-y-1">
             {navLinks.map((link) => {
               const active = pathname === link.href;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`text-sm transition ${active ? "text-orange-300" : "text-white/75 hover:text-orange-300"}`}
+                  className={`block px-4 py-2.5 text-sm rounded-lg transition ${
+                    active ? "text-white bg-white/[0.06]" : "text-white/50 hover:text-white hover:bg-white/[0.03]"
+                  }`}
                   onClick={() => setOpen(false)}
                 >
                   {link.label}
                 </Link>
               );
             })}
-            <hr className="border-white/10" />
-            {user ? (
-              <>
-                <Link
-                  href="/dashboard"
-                  className="flex items-center gap-2 text-sm text-white/75 hover:text-orange-300 transition"
-                  onClick={() => setOpen(false)}
-                >
-                  <User size={14} />
-                  Dashboard
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => { handleLogout(); setOpen(false); }}
-                  className="flex items-center gap-2 text-sm text-white/75 hover:text-red-400 transition"
-                >
-                  <LogOut size={14} />
-                  Logout
-                </button>
-              </>
-            ) : (
-              <>
-                <Link
-                  href="/auth"
-                  className="flex items-center gap-2 text-sm text-white/75 hover:text-orange-300 transition"
-                  onClick={() => setOpen(false)}
-                >
-                  Login
-                </Link>
-                <Button href="/pricing" className="w-full" onClick={() => setOpen(false)}>
-                  Join Now
-                </Button>
-              </>
-            )}
+            <div className="border-t border-white/[0.06] mt-2 pt-2 space-y-1">
+              {user ? (
+                <>
+                  <Link
+                    href="/dashboard"
+                    className="flex items-center gap-2 px-4 py-2.5 text-sm text-white/50 hover:text-white rounded-lg transition"
+                    onClick={() => setOpen(false)}
+                  >
+                    <User size={15} />
+                    Dashboard
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => { handleLogout(); setOpen(false); }}
+                    className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-white/50 hover:text-red-400 rounded-lg transition text-left"
+                  >
+                    <LogOut size={15} />
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/auth"
+                    className="block px-4 py-2.5 text-sm text-white/50 hover:text-white rounded-lg transition"
+                    onClick={() => setOpen(false)}
+                  >
+                    Sign In
+                  </Link>
+                  <div className="px-4 pt-1">
+                    <Button href="/auth" className="w-full py-2.5" onClick={() => setOpen(false)}>
+                      Join Now
+                    </Button>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </Container>
-      )}
-
+      </div>
     </header>
   );
 }

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Facebook, Instagram, Linkedin, Youtube } from "lucide-react";
+import { Facebook, Instagram, Linkedin, Youtube, Clock } from "lucide-react";
 import Button from "@/components/ui/button";
 import Card from "@/components/ui/card";
 import Container from "@/components/ui/container";
@@ -16,22 +16,22 @@ const socialIcons = {
 
 export default function TrainersPreview({ limit = 3 }) {
   return (
-    <section className="section-fade py-20">
+    <section className="py-16 sm:py-20">
       <Container className="space-y-10">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <SectionTitle
             eyebrow="Trainers"
-            title="Meet the experts behind every transformation."
-            description="Our trainers combine experience, motivation, and modern programming to help members progress with confidence."
+            title="Meet the people behind your transformation."
+            description="Our trainers bring years of experience and a genuine passion for helping you get stronger."
           />
-          <Button href="/trainers" variant="secondary">
-            View All Trainers
+          <Button href="/trainers" variant="secondary" className="shrink-0">
+            View All
           </Button>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {trainers.slice(0, limit).map((trainer, index) => (
-            <Reveal key={trainer.name} delay={index * 0.08}>
+            <Reveal key={trainer.name} delay={index * 0.06}>
               <Card className="group overflow-hidden">
                 <div className="relative overflow-hidden">
                   <Image
@@ -39,32 +39,34 @@ export default function TrainersPreview({ limit = 3 }) {
                     alt={trainer.name}
                     width={900}
                     height={1100}
-                    className="h-80 w-full object-cover transition duration-700 group-hover:scale-105"
+                    className="h-64 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-72"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent" />
-                  <div className="absolute left-5 top-5 rounded-full border border-white/10 bg-black/45 px-3 py-1 text-[11px] uppercase tracking-[0.3em] text-orange-300">
-                    Coach
-                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#111] via-transparent to-transparent" />
                 </div>
-                <div className="space-y-4 p-6">
-                  <div>
-                    <h3 className="text-2xl font-semibold text-white">{trainer.name}</h3>
-                    <p className="mt-2 text-sm text-orange-300">{trainer.role}</p>
-                    <p className="mt-3 text-sm leading-7 text-white/60">{trainer.bio}</p>
-                  </div>
-                  <div className="flex gap-3">
-                    {trainer.socials.map((social) => {
-                      const Icon = socialIcons[social];
-
-                      return (
-                        <span
-                          key={social}
-                          className="inline-flex rounded-full border border-white/10 bg-black/30 p-3 text-white/60 transition hover:-translate-y-0.5 hover:border-orange-400/30 hover:text-orange-300"
-                        >
-                          <Icon size={16} />
-                        </span>
-                      );
-                    })}
+                <div className="p-5">
+                  <h3 className="text-lg font-semibold text-white">{trainer.name}</h3>
+                  <p className="mt-1 text-sm text-red-400">{trainer.role}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-white/40 line-clamp-2">{trainer.bio}</p>
+                  <div className="flex items-center justify-between mt-4">
+                    <div className="flex gap-1.5">
+                      {trainer.socials.map((social) => {
+                        const Icon = socialIcons[social];
+                        return (
+                          <span
+                            key={social}
+                            className="inline-flex rounded-lg border border-white/[0.08] p-2 text-white/30 transition hover:text-white/70 hover:border-white/15"
+                          >
+                            <Icon size={14} />
+                          </span>
+                        );
+                      })}
+                    </div>
+                    {trainer.experience && (
+                      <span className="flex items-center gap-1 text-[11px] text-white/25">
+                        <Clock size={10} />
+                        {trainer.experience}
+                      </span>
+                    )}
                   </div>
                 </div>
               </Card>

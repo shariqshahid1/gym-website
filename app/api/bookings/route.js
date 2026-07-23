@@ -1,15 +1,13 @@
 import { NextResponse } from "next/server";
 import { bookingSchema } from "@/lib/validators";
-import { connectToDatabase } from "@/lib/mongodb";
-import Booking from "@/models/Booking";
+import { createBooking } from "@/lib/store";
 
 export async function POST(request) {
   try {
     const body = await request.json();
     const parsed = bookingSchema.parse(body);
 
-    await connectToDatabase();
-    await Booking.create(parsed);
+    createBooking(parsed);
 
     return NextResponse.json({ message: "Training session booked successfully." });
   } catch (error) {

@@ -1,16 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Eye, EyeOff, Loader2, CheckCircle, AlertCircle, Dumbbell, Sparkles } from "lucide-react";
+import { Eye, EyeOff, Loader2, CheckCircle, AlertCircle, Dumbbell, Copy, Check } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
+import { useRouter } from "next/navigation";
+
+const DEMO_EMAIL = "demo@pulseforge.com";
+const DEMO_PASSWORD = "Demo@123";
 
 const initialForm = { name: "", email: "", password: "" };
 const initialErrors = { name: "", email: "", password: "" };
 
 function validateField(name, value, mode) {
   if (name === "name" && mode === "signup" && value.length < 2) return "Name must be at least 2 characters";
-  if (name === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return "Enter a valid email address";
+  if (name === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return "Enter a valid email";
   if (name === "password" && value.length < 6) return "Password must be at least 6 characters";
   return "";
 }
@@ -32,19 +35,19 @@ export default function AuthForm() {
   const [errors, setErrors] = useState(initialErrors);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [remember, setRemember] = useState(false);
+  const [copied, setCopied] = useState(null);
   const router = useRouter();
   const { addToast } = useToast();
 
   function handleChange(name, value) {
-    setForm((current) => ({ ...current, [name]: value }));
+    setForm((c) => ({ ...c, [name]: value }));
     if (errors[name]) {
-      setErrors((current) => ({ ...current, [name]: validateField(name, value, mode) }));
+      setErrors((c) => ({ ...c, [name]: validateField(name, value, mode) }));
     }
   }
 
   function handleBlur(name, value) {
-    setErrors((current) => ({ ...current, [name]: validateField(name, value, mode) }));
+    setErrors((c) => ({ ...c, [name]: validateField(name, value, mode) }));
   }
 
   function validateForm() {
@@ -56,32 +59,26 @@ export default function AuthForm() {
     for (const key in newErrors) {
       if (newErrors[key]) filtered[key] = newErrors[key];
     }
-    setErrors((current) => ({ ...current, ...filtered }));
+    setErrors((c) => ({ ...c, ...filtered }));
     return Object.keys(filtered).length === 0;
   }
 
-  async function handleSubmit(event) {
-    event.preventDefault();
+  async function handleSubmit(e) {
+    e.preventDefault();
     if (!validateForm()) return;
-
     setLoading(true);
 
     const endpoint = mode === "login" ? "/api/auth/login" : "/api/auth/signup";
     const payload = mode === "login" ? { email: form.email, password: form.password } : form;
 
     try {
-      const response = await fetch(endpoint, {
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Authentication failed.");
-      }
-
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Authentication failed.");
       addToast(data.message, "success");
       router.push("/dashboard");
       router.refresh();
@@ -92,65 +89,73 @@ export default function AuthForm() {
     }
   }
 
+  function fillDemoCredentials() {
+    setForm((c) => ({ ...c, email: DEMO_EMAIL, password: DEMO_PASSWORD }));
+    setErrors(initialErrors);
+  }
+
+  function copyToClipboard(text, field) {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(field);
+      setTimeout(() => setCopied(null), 1500);
+    });
+  }
+
   const passwordStrength = getPasswordStrength(form.password);
   const strengthLabels = ["Weak", "Fair", "Good", "Strong", "Very Strong"];
-  const strengthColors = [
-    "bg-red-500",
-    "bg-orange-500",
-    "bg-yellow-500",
-    "bg-lime-400",
-    "bg-green-400"
-  ];
+  const strengthColors = ["bg-red-500", "bg-orange-500", "bg-yellow-500", "bg-emerald-500", "bg-emerald-400"];
 
   return (
-    <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] items-center min-h-[600px]">
-      <div className="rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(163,230,53,0.16),rgba(255,255,255,0.04))] p-8 sm:p-10 h-full flex flex-col justify-center relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-48 h-48 bg-lime-500/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-orange-500/5 rounded-full blur-3xl" />
-        <div className="relative">
-          <div className="inline-flex rounded-2xl bg-lime-500/10 border border-lime-400/20 p-3 mb-6">
-            <Dumbbell size={24} className="text-lime-300" />
-          </div>
-          <p className="text-sm uppercase tracking-[0.35em] text-lime-300">Member Access</p>
-          <h2 className="mt-5 text-4xl font-semibold text-white leading-[1.15]">
-            Train smarter<br />with your own account.
-          </h2>
-          <p className="mt-4 max-w-md text-sm leading-7 text-white/65">
-            Manage your membership, track your next session, and keep your coaching journey organized in one place.
-          </p>
-          <div className="mt-8 space-y-3">
-            {["Track your fitness progress", "Book training sessions", "Manage membership plans"].map((item) => (
-              <div key={item} className="flex items-center gap-3 text-sm text-white/70">
-                <CheckCircle size={16} className="text-lime-400 shrink-0" />
-                {item}
-              </div>
-            ))}
-          </div>
+    <div className="grid gap-8 lg:grid-cols-2 items-start min-h-[500px]">
+      {/* Left side - info */}
+      <div className="hidden lg:flex flex-col justify-center h-full px-6">
+        <div className="rounded-xl bg-red-600/10 border border-red-500/20 p-3 w-fit mb-6">
+          <Dumbbell size={22} className="text-red-400" />
+        </div>
+        <h2 className="text-3xl font-bold text-white leading-tight">
+          Your fitness journey<br />starts with one step.
+        </h2>
+        <p className="mt-4 text-sm leading-relaxed text-white/40 max-w-sm">
+          Track workouts, book sessions, and manage your membership from one place.
+        </p>
+        <div className="mt-8 space-y-3">
+          {["Track your fitness progress", "Book training sessions", "Manage membership plans"].map((item) => (
+            <div key={item} className="flex items-center gap-2.5 text-sm text-white/50">
+              <CheckCircle size={15} className="text-red-500/70 shrink-0" />
+              {item}
+            </div>
+          ))}
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-8 sm:p-10 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(163,230,53,0.06),transparent_60%)] pointer-events-none" />
+      {/* Right side - form */}
+      <div>
+        <form onSubmit={handleSubmit} className="rounded-2xl border border-white/[0.08] bg-[#111] p-6 sm:p-8">
+          <div className="lg:hidden flex items-center gap-2.5 mb-6">
+            <div className="rounded-lg bg-red-600/10 border border-red-500/20 p-2">
+              <Dumbbell size={18} className="text-red-400" />
+            </div>
+            <h2 className="text-xl font-bold text-white">Welcome back</h2>
+          </div>
 
-        <div className="relative">
-          <div className="mb-8 inline-flex rounded-full border border-white/10 bg-black/30 p-1">
+          <div className="mb-6 inline-flex rounded-lg border border-white/[0.08] bg-black/40 p-1">
             {["login", "signup"].map((item) => (
               <button
                 key={item}
                 type="button"
                 onClick={() => { setMode(item); setErrors(initialErrors); }}
-                className={`rounded-full px-5 py-2 text-sm capitalize font-medium transition-all duration-300 ${
+                className={`rounded-md px-5 py-2 text-sm font-medium capitalize transition ${
                   mode === item
-                    ? "bg-lime-400 text-black shadow-[0_4px_16px_rgba(163,230,53,0.3)]"
-                    : "text-white/65 hover:text-white/90"
+                    ? "bg-red-600 text-white"
+                    : "text-white/50 hover:text-white/80"
                 }`}
               >
-                {item}
+                {item === "login" ? "Sign In" : "Sign Up"}
               </button>
             ))}
           </div>
 
-          <div className="space-y-5">
+          <div className="space-y-4">
             {mode === "signup" && (
               <Field
                 label="Full Name"
@@ -159,19 +164,18 @@ export default function AuthForm() {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 error={errors.name}
-                placeholder="Enter your name"
-                icon={Sparkles}
+                placeholder="Your name"
               />
             )}
             <Field
-              label="Email Address"
+              label="Email"
               name="email"
               type="email"
               value={form.email}
               onChange={handleChange}
               onBlur={handleBlur}
               error={errors.email}
-              placeholder="Enter your email"
+              placeholder="you@email.com"
             />
             <div>
               <Field
@@ -182,12 +186,12 @@ export default function AuthForm() {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 error={errors.password}
-                placeholder="Minimum 6 characters"
+                placeholder="Min 6 characters"
               >
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/80 transition"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition"
                   tabIndex={-1}
                 >
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -195,18 +199,18 @@ export default function AuthForm() {
               </Field>
 
               {form.password.length > 0 && (
-                <div className="mt-3 space-y-1.5">
-                  <div className="flex gap-1.5">
+                <div className="mt-2.5 space-y-1.5">
+                  <div className="flex gap-1">
                     {[...Array(5)].map((_, i) => (
                       <div
                         key={i}
-                        className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-                          i < passwordStrength ? strengthColors[passwordStrength - 1] : "bg-white/10"
+                        className={`h-1 flex-1 rounded-full transition-all ${
+                          i < passwordStrength ? strengthColors[passwordStrength - 1] : "bg-white/[0.06]"
                         }`}
                       />
                     ))}
                   </div>
-                  <p className={`text-xs ${passwordStrength >= 4 ? "text-lime-300" : "text-white/50"}`}>
+                  <p className={`text-xs ${passwordStrength >= 4 ? "text-emerald-400" : "text-white/40"}`}>
                     {passwordStrength > 0 ? strengthLabels[passwordStrength - 1] : ""}
                   </p>
                 </div>
@@ -214,17 +218,12 @@ export default function AuthForm() {
             </div>
           </div>
 
-          <div className="mt-5 flex items-center justify-between">
+          <div className="mt-4 flex items-center justify-between">
             <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={remember}
-                onChange={(e) => setRemember(e.target.checked)}
-                className="h-4 w-4 rounded border-white/20 bg-black/40 accent-lime-400"
-              />
-              <span className="text-sm text-white/60">Remember me</span>
+              <input type="checkbox" className="h-4 w-4 rounded border-white/20 bg-black/40 accent-red-600" />
+              <span className="text-sm text-white/40">Remember me</span>
             </label>
-            <button type="button" className="text-sm text-orange-300/70 hover:text-orange-300 transition">
+            <button type="button" className="text-sm text-white/40 hover:text-white/70 transition">
               Forgot password?
             </button>
           </div>
@@ -232,40 +231,118 @@ export default function AuthForm() {
           <button
             type="submit"
             disabled={loading}
-            className="mt-6 w-full rounded-full bg-white px-5 py-3.5 text-sm font-semibold text-black transition-all duration-300 hover:bg-lime-300 hover:shadow-[0_8px_32px_rgba(163,230,53,0.25)] disabled:opacity-60 disabled:hover:shadow-none flex items-center justify-center gap-2"
+            className="mt-6 w-full rounded-lg bg-red-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-red-700 active:bg-red-800 disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {loading ? (
               <>
                 <Loader2 size={16} className="animate-spin" />
                 {mode === "login" ? "Signing in..." : "Creating account..."}
               </>
-            ) : mode === "login" ? (
-              <>
-                Login
-                <AlertCircle size={14} className="hidden sm:block" />
-              </>
-            ) : (
-              "Create Account"
-            )}
+            ) : mode === "login" ? "Sign In" : "Create Account"}
           </button>
-        </div>
-      </form>
+
+          <p className="mt-6 text-center text-sm text-white/30">
+            {mode === "login" ? "Don't have an account?" : "Already have an account?"}{" "}
+            <button
+              type="button"
+              onClick={() => { setMode(mode === "login" ? "signup" : "login"); setErrors(initialErrors); }}
+              className="text-red-400 hover:text-red-300 transition"
+            >
+              {mode === "login" ? "Sign up" : "Sign in"}
+            </button>
+          </p>
+        </form>
+
+        {/* Demo Credentials Box */}
+        {mode === "login" && (
+          <div className="mt-4 rounded-2xl border border-dashed border-red-500/20 bg-red-600/[0.04] p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-red-400">
+                Demo Login Credentials
+              </span>
+            </div>
+            <p className="text-xs text-white/40 mb-3">
+              Use these credentials to sign in. First time? Click &quot;Create Demo Account&quot; to register.
+            </p>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between rounded-lg bg-black/40 border border-white/[0.06] px-3 py-2">
+                <div>
+                  <span className="text-[10px] uppercase tracking-wider text-white/30 block">Email</span>
+                  <span className="text-sm text-white/70 font-mono">{DEMO_EMAIL}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => copyToClipboard(DEMO_EMAIL, "email")}
+                  className="text-white/30 hover:text-white/60 transition"
+                >
+                  {copied === "email" ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between rounded-lg bg-black/40 border border-white/[0.06] px-3 py-2">
+                <div>
+                  <span className="text-[10px] uppercase tracking-wider text-white/30 block">Password</span>
+                  <span className="text-sm text-white/70 font-mono">{DEMO_PASSWORD}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => copyToClipboard(DEMO_PASSWORD, "password")}
+                  className="text-white/30 hover:text-white/60 transition"
+                >
+                  {copied === "password" ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2 mt-3 sm:flex-row">
+              <button
+                type="button"
+                onClick={fillDemoCredentials}
+                className="flex-1 rounded-lg border border-red-500/20 bg-red-600/10 px-4 py-2 text-xs font-medium text-red-400 transition hover:bg-red-600/20"
+              >
+                Auto-fill credentials
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  setLoading(true);
+                  try {
+                    const res = await fetch("/api/auth/seed", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ name: "Demo User", email: DEMO_EMAIL, password: DEMO_PASSWORD })
+                    });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.message);
+                    addToast(data.message, "success");
+                    fillDemoCredentials();
+                  } catch (error) {
+                    addToast(error.message, "error");
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+                className="flex-1 rounded-lg bg-red-600 px-4 py-2 text-xs font-medium text-white transition hover:bg-red-700"
+              >
+                Create Demo Account
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
-function Field({ label, name, type = "text", value, onChange, onBlur, error, placeholder, icon: Icon, children }) {
+function Field({ label, name, type = "text", value, onChange, onBlur, error, placeholder, children }) {
   const hasError = !!error;
 
   return (
     <label className="block">
-      <span className="mb-2 block text-sm text-white/70">{label}</span>
+      <span className="mb-1.5 block text-sm text-white/60">{label}</span>
       <div className="relative">
-        {Icon && (
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30">
-            <Icon size={16} />
-          </div>
-        )}
         <input
           type={type}
           name={name}
@@ -273,18 +350,18 @@ function Field({ label, name, type = "text", value, onChange, onBlur, error, pla
           placeholder={placeholder}
           onChange={(e) => onChange(name, e.target.value)}
           onBlur={(e) => onBlur(name, e.target.value)}
-          className={`w-full rounded-2xl border px-4 py-3 text-sm text-white outline-none transition-all duration-200 bg-black/40 ${
+          className={`w-full rounded-lg border px-4 py-2.5 text-sm text-white outline-none transition bg-black/40 placeholder:text-white/20 ${
             hasError
-              ? "border-red-400/40 focus:border-red-400/60"
-              : "border-white/10 focus:border-lime-300/40"
-          } ${Icon ? "pl-11" : ""}`}
+              ? "border-red-500/40 focus:border-red-500/60"
+              : "border-white/[0.08] focus:border-red-500/30"
+          }`}
           required
         />
         {children}
       </div>
       {hasError && (
-        <p className="mt-1.5 text-xs text-red-400 flex items-center gap-1">
-          <AlertCircle size={12} />
+        <p className="mt-1 text-xs text-red-400 flex items-center gap-1">
+          <AlertCircle size={11} />
           {error}
         </p>
       )}

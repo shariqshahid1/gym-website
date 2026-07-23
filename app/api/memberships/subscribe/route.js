@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { getUserFromCookie } from "@/lib/auth";
-import { connectToDatabase } from "@/lib/mongodb";
 import { membershipSchema } from "@/lib/validators";
-import User from "@/models/User";
+import { findUserById, updateUserById } from "@/lib/store";
 
 export async function POST(request) {
   try {
@@ -14,12 +13,17 @@ export async function POST(request) {
     const body = await request.json();
     const parsed = membershipSchema.parse(body);
 
-    await connectToDatabase();
-    await User.findByIdAndUpdate(sessionUser.userId, {
+    const user = findUserById(sessionUser.userId);
+    if (!user) {
+      return NextResponse.json({ message: "User not found." }, { status: 404 });
+    }
+
+    updateUserById(sessionUser.userId, {
       membership: {
-        ...parsed,
+        plan: parsed.plan,
+        billingCycle: parsed.billingCycle,
         status: "active",
-        subscribedAt: new Date()
+        subscribedAt: new Date().toISOString()
       }
     });
 

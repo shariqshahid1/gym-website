@@ -18,36 +18,36 @@ export const metadata = {
 
 export default function ContactPage() {
   return (
-    <section className="py-20">
-      <Container className="space-y-12">
+    <section className="pt-28 pb-16 sm:pt-32 sm:pb-20">
+      <Container className="space-y-10">
         <SectionTitle
           eyebrow="Contact"
-          title="Reach out and start your fitness journey."
-          description="Ask about memberships, book a tour, or connect with the team for personal training and coaching support."
+          title="Let's talk about your goals."
+          description="Ask about memberships, book a tour, or connect with a coach."
         />
 
-        <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="space-y-5">
+        <div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">
+          <div className="space-y-3">
             {contactInfo.map((item) => {
               const Icon = item.icon;
               return (
-                <Card key={item.label} className="p-5 flex items-center gap-4 transition hover:-translate-y-0.5 duration-300">
-                  <div className="rounded-xl bg-orange-500/10 border border-orange-400/20 p-3 shrink-0">
-                    <Icon size={18} className="text-orange-300" />
+                <Card key={item.label} className="flex items-center gap-4 p-4 transition hover:bg-[#151515]">
+                  <div className="rounded-lg bg-red-600/10 border border-red-500/15 p-2.5 shrink-0">
+                    <Icon size={16} className="text-red-400" />
                   </div>
                   <div>
-                    <p className="text-xs uppercase tracking-[0.2em] text-white/50">{item.label}</p>
-                    <p className="text-sm text-white/80 mt-0.5">{item.value}</p>
+                    <p className="text-[11px] uppercase tracking-wider text-white/35">{item.label}</p>
+                    <p className="text-sm text-white/60">{item.value}</p>
                   </div>
                 </Card>
               );
             })}
 
-            <Card className="overflow-hidden p-2">
+            <Card className="overflow-hidden p-1.5">
               <iframe
                 title="PulseForge Gym Location"
                 src="https://www.google.com/maps?q=New%20York%20fitness%20gym&output=embed"
-                className="h-[280px] w-full rounded-[1.25rem] border-0"
+                className="h-[240px] w-full rounded-xl border-0"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
               />

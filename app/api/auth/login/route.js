@@ -1,16 +1,14 @@
 import { NextResponse } from "next/server";
 import { comparePassword, setAuthCookie, signToken } from "@/lib/auth";
-import { connectToDatabase } from "@/lib/mongodb";
 import { loginSchema } from "@/lib/validators";
-import User from "@/models/User";
+import { findUserByEmail } from "@/lib/store";
 
 export async function POST(request) {
   try {
     const body = await request.json();
     const parsed = loginSchema.parse(body);
 
-    await connectToDatabase();
-    const user = await User.findOne({ email: parsed.email });
+    const user = findUserByEmail(parsed.email);
 
     if (!user) {
       return NextResponse.json({ message: "Invalid credentials." }, { status: 401 });
@@ -21,7 +19,7 @@ export async function POST(request) {
       return NextResponse.json({ message: "Invalid credentials." }, { status: 401 });
     }
 
-    const token = signToken({ userId: user._id.toString(), email: user.email, role: user.role });
+    const token = signToken({ userId: user._id, email: user.email, role: user.role });
     await setAuthCookie(token);
 
     return NextResponse.json({

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Facebook, Instagram, Linkedin, Youtube } from "lucide-react";
+import { Facebook, Instagram, Linkedin, Youtube, Award, Clock } from "lucide-react";
 import Card from "@/components/ui/card";
 import Container from "@/components/ui/container";
 import Reveal from "@/components/ui/reveal";
@@ -20,50 +20,57 @@ export const metadata = {
 
 export default function TrainersPage() {
   return (
-    <section className="py-20">
-      <Container className="space-y-12">
+    <section className="pt-28 pb-16 sm:pt-32 sm:pb-20">
+      <Container className="space-y-10">
         <SectionTitle
-          eyebrow="Trainers"
-          title="A coaching team built for real progress."
-          description="Our trainers bring experience across strength, conditioning, yoga, mobility, and one-on-one transformation coaching."
+          eyebrow="Our Team"
+          title="Coaches who actually care about your progress."
+          description="Every trainer here has real certifications, real experience, and a genuine investment in helping you get stronger."
         />
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {trainers.map((trainer, index) => (
-            <Reveal key={trainer.name} delay={index * 0.08}>
-              <Card className="group overflow-hidden hover:border-orange-400/20 transition-all duration-500">
+            <Reveal key={trainer.name} delay={index * 0.06}>
+              <Card className="group overflow-hidden transition hover:bg-[#151515]">
                 <div className="relative overflow-hidden">
                   <Image
                     src={trainer.image}
                     alt={trainer.name}
                     width={900}
                     height={1100}
-                    className="h-80 w-full object-cover transition duration-700 group-hover:scale-105"
+                    className="h-64 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-72"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent" />
-                  <div className="absolute left-5 top-5 rounded-full border border-white/10 bg-black/45 px-3 py-1 text-[11px] uppercase tracking-[0.3em] text-orange-300">
-                    Coach
-                  </div>
-                  <div className="absolute bottom-5 right-5">
-                    <div className="flex gap-2">
-                      {trainer.socials.slice(0, 3).map((social) => {
-                        const Icon = socialIcons[social];
-                        return (
-                          <span
-                            key={social}
-                            className="inline-flex rounded-full border border-white/10 bg-black/45 p-2.5 text-white/60 transition hover:-translate-y-0.5 hover:border-orange-400/30 hover:text-orange-300"
-                          >
-                            <Icon size={14} />
-                          </span>
-                        );
-                      })}
-                    </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#111] via-transparent to-transparent" />
+                  <div className="absolute bottom-4 right-4 flex gap-1.5">
+                    {trainer.socials.slice(0, 3).map((social) => {
+                      const Icon = socialIcons[social];
+                      return (
+                        <span
+                          key={social}
+                          className="inline-flex rounded-lg border border-white/[0.1] bg-black/50 p-2 text-white/40 transition hover:text-white/80"
+                        >
+                          <Icon size={13} />
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
-                <div className="space-y-4 p-6">
-                  <div>
-                    <h3 className="text-2xl font-semibold text-white">{trainer.name}</h3>
-                    <p className="mt-1 text-sm text-orange-300">{trainer.role}</p>
-                    <p className="mt-3 text-sm leading-7 text-white/60">{trainer.bio}</p>
+                <div className="p-5">
+                  <h3 className="text-lg font-bold text-white">{trainer.name}</h3>
+                  <p className="mt-1 text-sm text-red-400">{trainer.role}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-white/40">{trainer.bio}</p>
+                  <div className="mt-4 flex flex-wrap gap-3 text-xs text-white/30">
+                    {trainer.experience && (
+                      <span className="flex items-center gap-1">
+                        <Clock size={11} className="text-red-400/60" />
+                        {trainer.experience}
+                      </span>
+                    )}
+                    {trainer.certifications && (
+                      <span className="flex items-center gap-1">
+                        <Award size={11} className="text-red-400/60" />
+                        {trainer.certifications.join(", ")}
+                      </span>
+                    )}
                   </div>
                 </div>
               </Card>

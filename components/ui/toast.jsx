@@ -27,7 +27,7 @@ export function ToastProvider({ children }) {
   return (
     <ToastContext.Provider value={{ addToast, removeToast }}>
       {children}
-      <div className="fixed bottom-6 right-6 z-[100] flex flex-col gap-3">
+      <div className="fixed bottom-6 right-6 z-[100] flex flex-col gap-3 max-sm:bottom-4 max-sm:right-4 max-sm:left-4">
         {toasts.map((toast) => (
           <ToastItem key={toast.id} toast={toast} onClose={() => removeToast(toast.id)} />
         ))}
@@ -43,15 +43,15 @@ const icons = {
 };
 
 const colors = {
-  success: "border-lime-400/30 bg-[linear-gradient(135deg,rgba(163,230,53,0.12),rgba(255,255,255,0.04))]",
-  error: "border-red-400/30 bg-[linear-gradient(135deg,rgba(239,68,68,0.12),rgba(255,255,255,0.04))]",
-  info: "border-orange-400/30 bg-[linear-gradient(135deg,rgba(249,115,22,0.12),rgba(255,255,255,0.04))]"
+  success: "border-emerald-500/30 bg-[#111]",
+  error: "border-red-500/30 bg-[#111]",
+  info: "border-white/10 bg-[#111]"
 };
 
 const iconColors = {
-  success: "text-lime-300",
+  success: "text-emerald-400",
   error: "text-red-400",
-  info: "text-orange-300"
+  info: "text-white/60"
 };
 
 function ToastItem({ toast, onClose }) {
@@ -59,14 +59,12 @@ function ToastItem({ toast, onClose }) {
 
   return (
     <div
-      className={`flex items-start gap-3 rounded-2xl border px-5 py-4 shadow-[0_12px_40px_rgba(0,0,0,0.4)] backdrop-blur-xl ${colors[toast.type]}`}
-      style={{
-        animation: "slideIn 0.3s ease-out"
-      }}
+      className={`flex items-start gap-3 rounded-xl border px-4 py-3 shadow-xl ${colors[toast.type]}`}
+      style={{ animation: "slideIn 0.3s ease-out" }}
     >
       <Icon size={18} className={`mt-0.5 shrink-0 ${iconColors[toast.type]}`} />
-      <p className="text-sm text-white/85">{toast.message}</p>
-      <button type="button" onClick={onClose} className="shrink-0 text-white/40 hover:text-white/80 transition">
+      <p className="text-sm text-white/80">{toast.message}</p>
+      <button type="button" onClick={onClose} className="shrink-0 text-white/30 hover:text-white/70 transition">
         <X size={14} />
       </button>
     </div>

@@ -3,7 +3,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Quote } from "lucide-react";
-import Card from "@/components/ui/card";
 import Container from "@/components/ui/container";
 import SectionTitle from "@/components/ui/section-title";
 import { testimonials } from "@/lib/data";
@@ -15,51 +14,48 @@ export default function TestimonialsSlider() {
     const timer = setInterval(() => {
       setIndex((current) => (current + 1) % testimonials.length);
     }, 5000);
-
     return () => clearInterval(timer);
   }, []);
 
   return (
-    <section id="testimonials" className="py-20">
+    <section id="testimonials" className="py-16 sm:py-20">
       <Container className="space-y-10">
         <SectionTitle
           eyebrow="Testimonials"
-          title="Real members. Real momentum."
-          description="Our community stays because the atmosphere, coaching, and results all work together."
+          title="Real members, real results."
+          description="We don't need to sell you. Our members do the talking."
           align="center"
         />
-        <Card className="mx-auto max-w-4xl overflow-hidden p-8 text-center sm:p-12 relative">
-          <div className="absolute -top-6 left-1/2 -translate-x-1/2">
-            <div className="rounded-2xl bg-orange-500/10 border border-orange-400/20 p-3">
-              <Quote size={24} className="text-orange-300" />
-            </div>
+
+        <div className="mx-auto max-w-3xl text-center">
+          <div className="inline-flex rounded-xl bg-red-600/10 border border-red-500/15 p-2.5 mb-6">
+            <Quote size={20} className="text-red-400" />
           </div>
+
           <AnimatePresence mode="wait">
             <motion.div
               key={testimonials[index].author}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.45 }}
-              className="mt-4 space-y-6"
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.35 }}
             >
-              <p className="text-2xl font-medium leading-10 text-white sm:text-3xl italic">
+              <p className="text-xl font-medium leading-relaxed text-white/80 sm:text-2xl italic">
                 &ldquo;{testimonials[index].quote}&rdquo;
               </p>
-              <div>
-                <div className="inline-flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-sm font-semibold text-white">
-                    {testimonials[index].author.split(" ").map(n => n[0]).join("")}
-                  </div>
-                  <div className="text-left">
-                    <div className="text-sm uppercase tracking-[0.28em] text-orange-300">{testimonials[index].author}</div>
-                    <div className="mt-0.5 text-sm text-white/55">{testimonials[index].role}</div>
-                  </div>
+              <div className="mt-6 flex items-center justify-center gap-3">
+                <div className="h-9 w-9 rounded-full bg-red-600/15 border border-red-500/20 flex items-center justify-center text-xs font-semibold text-red-400">
+                  {testimonials[index].author.split(" ").map(n => n[0]).join("")}
+                </div>
+                <div className="text-left">
+                  <div className="text-sm font-medium text-white/70">{testimonials[index].author}</div>
+                  <div className="text-xs text-white/35">{testimonials[index].role}</div>
                 </div>
               </div>
             </motion.div>
           </AnimatePresence>
-          <div className="mt-8 flex justify-center gap-3">
+
+          <div className="mt-8 flex justify-center gap-2">
             {testimonials.map((item, dotIndex) => (
               <button
                 key={item.author}
@@ -68,13 +64,13 @@ export default function TestimonialsSlider() {
                 onClick={() => setIndex(dotIndex)}
                 className={`rounded-full transition-all duration-300 ${
                   dotIndex === index
-                    ? "h-2.5 w-10 bg-orange-400"
-                    : "h-2.5 w-2.5 bg-white/15 hover:bg-white/30"
+                    ? "h-2 w-8 bg-red-500"
+                    : "h-2 w-2 bg-white/10 hover:bg-white/20"
                 }`}
               />
             ))}
           </div>
-        </Card>
+        </div>
       </Container>
     </section>
   );

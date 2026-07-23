@@ -6,5 +6,9 @@ export const metadata = {
 };
 
 export default function PricingPage() {
-  return <PricingSection />;
+  return (
+    <section className="pt-28 sm:pt-32">
+      <PricingSection />
+    </section>
+  );
 }

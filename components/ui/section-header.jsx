@@ -5,12 +5,12 @@ export default function SectionHeader({ eyebrow, title, description, align = "le
 
   return (
     <Reveal className={`flex flex-col gap-4 ${alignment}`}>
-      <span className="inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1 text-xs uppercase tracking-[0.35em] text-lime-300">
+      <span className="text-xs font-semibold uppercase tracking-[0.25em] text-red-500">
         {eyebrow}
       </span>
       <div className="space-y-3">
-        <h2 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">{title}</h2>
-        <p className="max-w-2xl text-sm leading-7 text-white/65 sm:text-base">{description}</p>
+        <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">{title}</h2>
+        <p className="max-w-xl text-[15px] leading-relaxed text-white/50">{description}</p>
       </div>
     </Reveal>
   );

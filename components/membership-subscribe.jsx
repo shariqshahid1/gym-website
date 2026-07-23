@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, CheckCircle, CreditCard, Zap } from "lucide-react";
+import { Loader2, CreditCard, Zap, CheckCircle } from "lucide-react";
 import { pricingPlans } from "@/lib/data";
 import { useToast } from "@/components/ui/toast";
 
@@ -16,20 +16,14 @@ export default function MembershipSubscribe() {
 
   async function handleSubscribe() {
     setLoading(true);
-
     try {
-      const response = await fetch("/api/memberships/subscribe", {
+      const res = await fetch("/api/memberships/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ plan, billingCycle })
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Subscription failed.");
-      }
-
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Subscription failed.");
       addToast(data.message, "success");
     } catch (error) {
       addToast(error.message, "error");
@@ -39,22 +33,24 @@ export default function MembershipSubscribe() {
   }
 
   return (
-    <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 sm:p-8">
-      <div className="flex items-center gap-3 mb-2">
-        <div className="rounded-xl bg-orange-500/10 border border-orange-400/20 p-2.5">
-          <CreditCard size={18} className="text-orange-300" />
+    <div className="rounded-2xl border border-white/[0.08] bg-[#111] p-6">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="rounded-lg bg-red-600/10 border border-red-500/15 p-2.5">
+          <CreditCard size={16} className="text-red-400" />
         </div>
-        <h3 className="text-xl font-semibold text-white">Activate Membership</h3>
+        <div>
+          <h3 className="text-base font-semibold text-white">Activate Membership</h3>
+          <p className="text-xs text-white/40">Choose and activate your plan</p>
+        </div>
       </div>
-      <p className="text-sm leading-7 text-white/60">Choose your membership and activate it from your account.</p>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-2">
         <label className="block">
-          <span className="mb-2 block text-sm text-white/70">Plan</span>
+          <span className="mb-1.5 block text-xs text-white/50">Plan</span>
           <select
             value={plan}
-            onChange={(event) => setPlan(event.target.value)}
-            className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none transition focus:border-lime-300/40"
+            onChange={(e) => setPlan(e.target.value)}
+            className="w-full rounded-lg border border-white/[0.08] bg-black/40 px-3 py-2.5 text-sm text-white outline-none transition focus:border-red-500/30"
           >
             {pricingPlans.map((item) => (
               <option key={item.name}>{item.name}</option>
@@ -62,26 +58,29 @@ export default function MembershipSubscribe() {
           </select>
         </label>
         <label className="block">
-          <span className="mb-2 block text-sm text-white/70">Billing Cycle</span>
+          <span className="mb-1.5 block text-xs text-white/50">Billing</span>
           <select
             value={billingCycle}
-            onChange={(event) => setBillingCycle(event.target.value)}
-            className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none transition focus:border-lime-300/40"
+            onChange={(e) => setBillingCycle(e.target.value)}
+            className="w-full rounded-lg border border-white/[0.08] bg-black/40 px-3 py-2.5 text-sm text-white outline-none transition focus:border-red-500/30"
           >
             <option value="monthly">Monthly — ${selectedPlan?.priceMonthly}/mo</option>
-            <option value="yearly">Yearly — ${selectedPlan?.priceYearly}/yr (save {Math.round((1 - selectedPlan?.priceYearly / (selectedPlan?.priceMonthly * 12)) * 100)}%)</option>
+            <option value="yearly">Yearly — ${selectedPlan?.priceYearly}/yr</option>
           </select>
         </label>
       </div>
 
       {selectedPlan && (
-        <div className="mt-6 rounded-2xl border border-white/10 bg-black/30 p-4">
+        <div className="mt-4 rounded-xl border border-white/[0.06] bg-black/30 p-4">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-white/70">Total</span>
-            <span className="text-2xl font-semibold text-white">${price}<span className="text-sm font-normal text-white/50">/{billingCycle === "monthly" ? "mo" : "yr"}</span></span>
+            <span className="text-sm text-white/50">Total</span>
+            <span className="text-xl font-bold text-white">
+              ${price}
+              <span className="text-xs font-normal text-white/30">/{billingCycle === "monthly" ? "mo" : "yr"}</span>
+            </span>
           </div>
-          <div className="mt-3 flex items-center gap-2 text-xs text-lime-300">
-            <Zap size={12} />
+          <div className="mt-2 flex items-center gap-1.5 text-xs text-emerald-400">
+            <Zap size={11} />
             {billingCycle === "yearly" ? "Best value — 2 months free" : "Cancel anytime"}
           </div>
         </div>
@@ -91,16 +90,16 @@ export default function MembershipSubscribe() {
         type="button"
         onClick={handleSubscribe}
         disabled={loading}
-        className="mt-6 w-full rounded-full bg-white px-5 py-3.5 text-sm font-semibold text-black transition-all duration-300 hover:bg-lime-300 hover:shadow-[0_8px_32px_rgba(163,230,53,0.25)] disabled:opacity-60 disabled:hover:shadow-none flex items-center justify-center gap-2"
+        className="mt-4 w-full rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-red-700 disabled:opacity-50 flex items-center justify-center gap-2"
       >
         {loading ? (
           <>
-            <Loader2 size={16} className="animate-spin" />
+            <Loader2 size={15} className="animate-spin" />
             Activating...
           </>
         ) : (
           <>
-            <CheckCircle size={16} />
+            <CheckCircle size={15} />
             Subscribe Now
           </>
         )}

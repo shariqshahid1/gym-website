@@ -36,9 +36,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${poppins.variable} bg-[#060606] text-white antialiased`}>
+      <body className={`${inter.variable} ${poppins.variable} bg-[#0a0a0a] text-white antialiased`}>
         <ToastProvider>
-          <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(249,115,22,0.18),transparent_26%),radial-gradient(circle_at_85%_10%,rgba(239,68,68,0.14),transparent_20%),linear-gradient(180deg,#060606_0%,#0c0c0c_45%,#050505_100%)]">
+          <div className="min-h-screen">
             <Navbar />
             <main>{children}</main>
             <Footer />
