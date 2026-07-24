@@ -20,7 +20,7 @@ export const metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
     default: `${siteConfig.name} | Elite Fitness & Training`,
-    template: `%s | ${siteConfig.name}`
+    template: `${siteConfig.name} | %s`
   },
   description: siteConfig.description,
   keywords: ["gym website", "fitness", "personal training", "next.js gym"],
